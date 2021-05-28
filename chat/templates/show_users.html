@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="{%static 'css/index.css' %"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+    <title>Chat Room</title>
+</head>
+<body class="bg-light">
+
+  <nav class="overlay navbar navbar-expand-md bg-dark navbar-dark" id="myNav">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">Chat App</a>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        {% if request.session.username %}
+        {%ifequal image ""%}
+        <a href="/media/download.png"><img src="/media/download.png" alt="" height="40px" width="40px" class="rounded"></a>
+        {%else%}
+        <a href="/media/{{image}}"><img src="/media/{{image}}" alt="" height="40px" width="40px" class="rounded"></a>
+        {%endifequal%}
+        <li class="nav-item"><a class="nav-link" href="/profile">{{request.session.username}}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+        <!-- <div class="logo-image">
+          <img src="/media/{{userr.img}}" alt="" height="40px" width="40px" class="rounded-circle">
+        </div>   -->
+        
+        {% else %}
+        <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user"></i>Sign Up</a></li>
+        <li class="nav-item"><a class="nav-link" href="/login"><i class="fas fa-lock"></i> </span> Login</a></li>
+        {% endif %}
+      </ul>
+    </div>  
+  </nav>
+  <br>
+  {%if request.session.username%}
+  <div>
+    {{ request.session.username|json_script:'username' }}
+    <div class="container">
+    <div class="row"> 
+        <div class="col-md-6">
+          <h3 class="text-center">Recently talked</h3>
+          {%for i in recently_talked%}
+
+          <li class="list-group-item">
+            <!-- <button onclick="submit('{{i.username}}')">{{i.username}}</button><br> -->
+            <div class="nearby-user">
+                            
+                <div class="row">
+
+
+
+          <div class="col-md-3 col-sm-3">
+            {%if i.img %}
+              <a href="/media/{{i.img}}"><img src="/media/{{i.img}}" alt="hello" height="100px" width="100px" class="profile-photo-lg"style="border-radius:50%"></a>
+            {%else%}
+              <a href="/media/download.png"><img src="/media/download.png" alt="hello" height="100px" width="100px" class="profile-photo-lg"  style="border-radius:50%"></a>
+            {%endif%}
+            </div>
+          <div class="col-md-7 col-sm-7">
+              <h5 class="profile-link">{{i.username}}</h5><br>
+              {%for j in status%}
+              {%ifequal j.user_id i.username%}
+                {%ifequal j.status "connected"%}
+                <small><i class="fa fa-circle" style="color:#43cc39"></i>online</small>
+                {%else%}
+                <small><i class="fa fa-circle" style="color:#e64848"></i>offline</small>
+                {%endifequal%}
+              {%endifequal%}
+              {%endfor%}
+          </div>
+          <div class="col-md-2 col-sm-2">
+              <a onclick="submit('{{i.username}}')" style="margin-top: 10%;" class="btn btn-primary">Chat</a>
+          </div>
+        </div>
+      </div>
+      </li>
+
+
+
+          {%endfor%}
+        </div>                  
+        <div class="col-md-6">
+        <div class="people-nearby">
+            <h3 class="text-center">Whom you want to talk with?</h3>
+    {%for i in status%}
+    <li class="list-group-item">
+    <!-- <button onclick="submit('{{i.username}}')">{{i.username}}</button><br> -->
+    <div class="nearby-user">
+                    
+        <div class="row">
+            
+        <div class="col-md-3 col-sm-3">
+          {%if i.user.img %}
+              <a href="/media/{{i.user.img}}"><img src="/media/{{i.user.img}}" alt="hello" height="100px" width="100px" class="profile-photo-lg"style="border-radius:50%"></a>
+            {%else%}
+              <a href="/media/download.png"><img src="/media/download.png" alt="hello" height="100px" width="100px" class="profile-photo-lg"  style="border-radius:50%"></a>
+            {%endif%}
+          </div>
+        <div class="col-md-7 col-sm-7">
+            <h5 class="profile-link">{{i.user_id}}</h5><br>
+            {%ifequal i.status "connected"%}
+            <small><i class="fa fa-circle" style="color:#43cc39"></i>online</small>
+            {%else%}
+            <small><i class="fa fa-circle" style="color:#e64848"></i>offline</small>
+            {%endifequal%}
+        </div>
+        <div class="col-md-2 col-sm-2">
+            <a onclick="submit('{{i.user_id}}')" style="margin-top: 10%;" class="btn btn-primary">Chat</a>
+        </div>
+        </div>
+        </div>
+    </li>    
+    {%endfor%}
+    </div>
+    </div>
+    <!-- <div class="col-md-2"></div>  -->
+    </div>
+    </div>
+    
+
+    <script>
+        function submit(you)
+        {
+            window.location.pathname = '/personalchat/'+you;
+        }
+        //websocket for online and offline status of user
+        const username = JSON.parse(document.getElementById('username').textContent);
+        const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/loginstatus/'
+            + username
+            +'/'
+        );
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+        };
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+    </script>
+    </div>
+    {%endif%}

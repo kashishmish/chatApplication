@@ -1,0 +1,111 @@
+<!-- chat/templates/chat/index.html -->
+{% load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="{%static 'css/index.css' %"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+    <title>Chat Room</title>
+</head>
+<body class="bg-light">
+
+  <nav class="overlay navbar navbar-expand-md bg-dark navbar-dark" id="myNav">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">Chat App</a>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        {% if request.session.username %}
+        {%ifequal image ""%}
+        <a href="/media/download.png"><img src="/media/download.png" alt="" height="40px" width="40px" class="rounded"></a>
+        {%else%}
+        <a href="/media/{{image}}"><img src="/media/{{image}}" alt="" height="40px" width="40px" class="rounded"></a>
+        {%endifequal%}
+        <li class="nav-item"><a class="nav-link" href="/profile">{{request.session.username}}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+        
+        {% else %}
+        <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user"></i>Sign Up</a></li>
+        <li class="nav-item"><a class="nav-link" href="/login"><i class="fas fa-lock"></i> </span> Login</a></li>
+        {% endif %}
+      </ul>
+    </div>  
+  </nav>
+  <br>
+  {%block content%}
+    {%if request.session.username%}
+    {{ request.session.username|json_script:'username' }}
+    <div class="container">
+        <div class="card-columns d-flex justify-content-center">
+          <div class="card" style="height:600px">
+            <div class="card-block">
+              <h4 class="card-title text-center card-header">Talk in group</h4>
+              <img src="/media/group_icon.jpg" alt="" height="540px"width="100%">
+              <a href="/groups" class="btn btn-primary "style="width:100%;position: absolute; bottom: 0; right: 0;">Join Group</a>
+              </div>
+          </div>
+          <div class="card"style="height:600px">
+            <div class="card-block">
+              <h4 class="card-title text-center card-header" >Personal Chatting</h4>
+              <img src="/media/personal.jpg" alt="" height="540px"width="100%">
+              <a href="/personal_chat" class="btn btn-primary" style="width:100%;position: absolute; bottom: 0; right: 0;">Chat with Friends</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    <script>
+        //websocket for online and offline status of user
+        const username = JSON.parse(document.getElementById('username').textContent);
+        const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/loginstatus/'
+            + username
+            +'/'
+        );
+        output=""
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+        };
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+    </script>
+    {% else %}
+    <div class="container">
+        <div class="card-columns d-flex justify-content-center">
+          <div class="card" style="height:600px">
+            <div class="card-block">
+              <h4 class="card-title text-center card-header">Register</h4>
+              <a href="/register" class="btn btn-primary "style="width:100%;position: absolute; bottom: 0; right: 0;">Register</a>
+              </div>
+          </div>
+          <div class="card"style="height:600px">
+            <div class="card-block">
+              <h4 class="card-title text-center card-header" >Sign in</h4>
+              <a href="/login" class="btn btn-primary" style="width:100%;position: absolute; bottom: 0; right: 0;">Sign in</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {%endif%}
+    {%endblock%}
+</body>
+</html>

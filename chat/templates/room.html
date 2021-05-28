@@ -1,0 +1,191 @@
+<!-- chat/templates/chat/room.html -->
+{%load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="{%static 'css/index.css' %"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'css/css.css'%}">
+  
+    <title>Chat Room</title>
+</head>
+<body class="bg-light">
+
+  <nav class="overlay navbar navbar-expand-md bg-dark navbar-dark" id="myNav">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">Chat App</a>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        {% if request.session.username %}
+        {%ifequal image ""%}
+        <a href="/media/download.png"><img src="/media/download.png" alt="" height="40px" width="40px" class="rounded"></a>
+        {%else%}
+        <a href="/media/{{image}}"><img src="/media/{{image}}" alt="" height="40px" width="40px" class="rounded"></a>
+        {%endifequal%}
+        <li class="nav-item"><a class="nav-link" href="/profile">{{request.session.username}}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+        
+        {% else %}
+        <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user"></i>Sign Up</a></li>
+        <li class="nav-item"><a class="nav-link" href="/login"><i class="fas fa-lock"></i> </span> Login</a></li>
+        {% endif %}
+      </ul>
+    </div>  
+  </nav>
+  <br>
+  {% if request.session.username %}
+    <a href="/groups"class="btn btn-secondary">Go Back</a>
+    <div class="container col-md-8">
+        <div class="card-header msg_head">
+            <div class="d-flex bd-highlight">
+                <div class="user_info">
+                    <span>Group Name: {{room_name}}</span><br><small class="float-right">Created_by:{{created_by.created_by_id}}</small>
+                </div>
+            </div>
+        </div>
+        <div id="chat-log">
+            {%for message in messages%}
+            {%ifequal message.username user_name%}
+                <div class="messages right"><div class="float-right">Me</div><br><div class="main_msg">{{message.message}}</div><small class="float-right">{{message.datetime}}</small></div>
+                
+            {%else%}
+            <div class="messages left"><div class="float-left">{{message.username}}</div><br><div class="main_msg">{{message.message}}</div><small class="float-left">{{message.datetime}}</small></div>
+                
+            {%endifequal%}
+            {%endfor%}
+        </div>
+        <div class="card-footer">
+            <div class="input-group">
+                <div class="input-group-append">
+                    <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
+                </div>
+                <input name="" class="form-control type_msg" id="chat-message-input" placeholder="Type your message...">
+                <div class="input-group-append">
+                    <input class="input-group-text send_btn"id="chat-message-submit" type="button" value="send">
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ room_name|json_script:"room-name" }}
+    {{ user_name|json_script:"user-name" }}
+    <script>
+        function scrollToBottom() {
+            let objDiv = document.getElementById("chat-log");
+            objDiv.scrollTop = objDiv.scrollHeight;
+        }
+        scrollToBottom();
+        const roomName = JSON.parse(document.getElementById('room-name').textContent);
+        const userName = JSON.parse(document.getElementById('user-name').textContent);
+
+        const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/chat/'
+            + roomName
+            +'/'
+            + userName
+            + '/'
+        );
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            var date=Date(data.time);
+            console.log(date);
+            var date_new=""
+            var c=0;
+            var a=[];
+            var d=0;
+            for(i=0;i<date.length;i++)
+            {
+                if(i>=4 && c<2)
+                {
+                    if(date[i]==":")
+                    {
+                        a.push(date[i-2]+date[i-1]);
+                        c+=1;
+                    }
+                    if(c==0)
+                    {
+                        if(date[i]==" " && i>=8)
+                        {
+                            d+=1
+                            date_new=date_new+","+date[i];
+                        }
+                        else if(d<2)
+                        {
+                            date_new=date_new+date[i];
+                        }
+                    }
+                }
+            }
+            var hours= parseInt(a[0])
+            var minutes= parseInt(a[1])
+            var ampm = hours >= 12 ? 'p.m.' : 'a.m.';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            var strTime = hours + ':' + minutes + ' ' + ampm;
+            date_new=date_new+strTime;
+            if(data.user_name==userName)
+            {
+                document.getElementById("chat-log").innerHTML += "<div class='messages right'><div class='float-right'>Me</div><br><div class='main_msg'>"+data.message+"</div><small class='float-right'>"+date_new+"</small></div>";
+            }
+            else
+            {
+                document.getElementById("chat-log").innerHTML += "<div class='message left'><div class='float-left'>"+data.user_name+"</div><br><div class='main_msg'>"+data.message+"</div><small class='float-left'>"+date_new+"</small></div>";
+            }
+            scrollToBottom();
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        console.log(document.getElementById('chat-message-input').value)
+
+        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#chat-message-submit').click();
+            }
+        };
+
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            if(messageInputDom.value=="")
+            {
+                alert("can not send empty message");
+            }
+            else{
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'user_name':userName,
+                'message': message
+            }));
+            messageInputDom.value = '';
+        }
+        };
+    </script>
+    {%else%}
+    Login First
+    {%endif%}
+</body>
+</html>

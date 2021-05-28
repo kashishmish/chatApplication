@@ -1,0 +1,90 @@
+{%extends 'index.html'%}
+{% load static %}
+{%block content%}
+      <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card-header text-center">Change Details</div>
+                <div class="card-body">
+                    <form name="my-form" onsubmit="return validate()" action="/profile" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label for="full_name" class="col-md-4 col-form-label text-md-right">Full Name</label>
+                            <div class="col-md-6">
+                                <input type="text" id="full_name" class="form-control" name="name"value="{{userr.name}}">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="email_address" class="col-md-4 col-form-label text-md-right">E-Mail Address</label>
+                            <div class="col-md-6">
+                                <input type="text" id="email_address" class="form-control"value="{{userr.email}}" name="email" disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="user_name" class="col-md-4 col-form-label text-md-right">User Name</label>
+                            <div class="col-md-6">
+                                <input type="text" id="user_name" class="form-control" value="{{userr.username}}" name="username">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="photo" class="col-md-4 col-form-label text-md-right">Profile picture</label>
+                            <div class="col-md-6">
+                                <input type="file" id="photo" class="form-control" name="picture">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                          <label for="photo" class="col-md-4 col-form-label text-md-right"></label>
+                          <div class="col-md-6">
+                              <a href="remove_profile" class="btn btn-success">Remove Profile Picture</a>
+                          </div>
+                      </div>
+
+
+                            <div class="col-md-6 offset-md-4">
+                                <button type="submit" class="btn btn-primary">
+                                Change Details
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <a href="/delete_user/{{userr.username}}" onclick="return confirm_delete()"class="btn btn-danger">Delete Account</a>
+                    <a href="/change_password" class="btn btn-danger">Change Password</a>
+                    <script>
+                        function confirm_delete()
+                        {
+                            if (confirm("Are you sure you want to delete this account??")) {
+                                return true;
+                              } else {
+                                return false;
+                              }
+                        }
+                    </script>
+                </div>
+            <div class="col-md-6">
+                <div class="card-header text-center">Profile</div>
+                <div class="card">
+                  {%if userr.img%}
+                    <img src="/media/{{userr.img}}" alt="" height="400px" width="100%" class="">
+                  {%else%}
+                    <img src="/media/download.png" alt="hello" height="400px" width="100%" class="">
+                  {%endif%}
+                    <h1 class="text-center title">{{userr.name}}</h1>
+                    <i><h4 class="text-center">Username:{{userr.username}}</h4>
+                    <h4 class="text-center">Email:{{userr.email}}</h4></i>
+                  </div>
+            </div>
+        </div>
+
+
+      </div>
+
+
+</main>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+{%endblock%}

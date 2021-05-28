@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="{%static 'css/index.css' %"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+    <title>Chat Room</title>
+</head>
+<body class="bg-light">
+
+  <nav class="overlay navbar navbar-expand-md bg-dark navbar-dark" id="myNav">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">Chat App</a>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        {% if request.session.username %}
+        {%ifequal image ""%}
+        <a href="/media/download.png"><img src="/media/download.png" alt="" height="40px" width="40px" class="rounded"></a>
+        {%else%}
+        <a href="/media/{{image}}"><img src="/media/{{image}}" alt="" height="40px" width="40px" class="rounded"></a>
+        {%endifequal%}
+        <li class="nav-item"><a class="nav-link" href="/profile">{{request.session.username}}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+        <!-- <div class="logo-image">
+          <img src="/media/{{userr.img}}" alt="" height="40px" width="40px" class="rounded-circle">
+        </div>   -->
+        
+        {% else %}
+        <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user"></i>Sign Up</a></li>
+        <li class="nav-item"><a class="nav-link" href="/login"><i class="fas fa-lock"></i> </span> Login</a></li>
+        {% endif %}
+      </ul>
+    </div>  
+  </nav>
+  <br>
+  {%if request.session.username%}
+  <div>
+      <div class="row">
+          <div class="col-md-6">
+    <h3 class="text-center">What chat room would you like to enter?</h3>
+    {{ request.session.username|json_script:'username' }}
+    <ul class="list-group">
+    {%for i in groups%}
+        <li class="list-group-item" style="width:100%">{{i.room}} <button class="float-right btn btn-primary"onclick="room_submit('{{i.room}}')">Enter</button><br><p class="float-left">Created by:{{i.created_by_id}}</p></li>
+    {%endfor%}
+    </ul>  
+    </div>
+    <div class="col-md-6">
+        <h3 class="text-center">Make New Group</h3>
+    <input id="room-name-input" type="text" size="100" class="form-control">
+    <small>Don't give group name which is already created.</small><br>
+    <input id="room-name-submit" type="button"class="btn btn-primary" value="Enter">
+</div>
+</div>
+
+    <script>
+        function room_submit(room)
+        {
+            var roomName = room;
+            window.location.pathname = '/chat/' + roomName;
+        }
+        document.querySelector('#room-name-submit').onclick=function(e)
+        {
+            var room=document.querySelector('#room-name-input').value;
+            window.location.pathname = '/chat/' + room ;
+        };
+          //websocket for online and offline status of user
+          const username = JSON.parse(document.getElementById('username').textContent);
+          const chatSocket = new WebSocket(
+              'ws://'
+              + window.location.host
+              + '/ws/loginstatus/'
+              + username
+              +'/'
+          );
+          chatSocket.onmessage = function(e) {
+              const data = JSON.parse(e.data);
+          };
+          chatSocket.onclose = function(e) {
+              console.error('Chat socket closed unexpectedly');
+          };
+    </script>
+    </div>
+    {%endif%}
+</body>
+</html>

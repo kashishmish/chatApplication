@@ -1,0 +1,79 @@
+<!-- chat/templates/chat/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="{%static 'css/index.css' %"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+    <title>Login Here</title>
+</head>
+<body class="bg-light">
+  {%for i in messages%}
+  {{i}}
+  {%endfor%}
+
+  <nav class="overlay navbar navbar-expand-md bg-dark navbar-dark" id="myNav">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">Chat App</a>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item"><a class="nav-link" href="/register"><i class="fas fa-user"></i>Sign Up</a></li>
+      </ul>
+    </div>  
+  </nav>
+  <br>
+<div class="container bg-light" style="height:400px;width:60%">
+
+    <form action="" onsubmit="websock();" method="post" enctype="multipart/form-data" class="register">
+      {% csrf_token %}
+      <h1 class="bg-dark list-item text-light"align="center" style="padding-top: 10px;padding-bottom:10px;">Login</h1>
+      <div class="container" style="height:200px;width:80%">
+        
+        <hr>
+        
+    
+        <label for="uname"><b >Username</b></label><br>
+        <input type="text" class="form-control"placeholder="Enter Username" name="username"><label id="u"></label><br>
+        <label for="validate"id="validuser"></label><br>
+        
+    
+        <label for="psw"><b >Password</b></label><br>
+        <input type="password" class="form-control"placeholder="Enter Password" name="password">
+    
+        <hr>
+    
+        <input type="submit" class="btn btn-danger" name="submit" style="width:100%"value="Login"class="registerbtn">
+
+        <p align="center">Don't have an account? <a href="/register">Register Here</a>.</p>
+        <p align="center"> <a href="/change_password">Forgot Password</a></p><br>
+        <label id="na"></label><br>
+      </div>
+    </form>
+    
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    
+    
+    </body>
+    </html>

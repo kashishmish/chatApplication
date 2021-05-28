@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="/otp_mail"method="post"enctype="multipart/form-data">
+        {%csrf_token%}
+        <input type="text"name="otp1">
+        <input type="text"value="{{name}}"name="name"hidden>
+        <input type="text"value="{{username}}"name="username"hidden>
+        <input type="text"value="{{email}}"name="email"hidden>
+        <input type="text"value="{{password}}"name="password"hidden>
+        <input type="text"value="{{otp}}"name="otp2"hidden>
+        <input type="submit">
+    </form>
+    <a href="/register">if wrong email id</a>
+</body>
+</html>

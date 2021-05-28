@@ -1,0 +1,32 @@
+
+#chat-log
+{
+    max-width:100%;
+    background-color: white;
+    height:60vh;
+    overflow-y: auto;
+}
+.messages
+{
+    min-width: 20%;
+    max-width: max-content;
+    padding: 10px;
+    margin:6px 2px;
+}
+.messages .main_msg
+{
+    background-color: grey;
+    border:2px solid black;
+    padding: 8px;
+    border-radius: 10px;
+}
+.left
+{
+    float: left;
+    clear: both;
+}
+.right
+{
+    float: right;
+    clear: both;
+}
